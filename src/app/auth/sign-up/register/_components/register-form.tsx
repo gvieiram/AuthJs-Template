@@ -1,121 +1,158 @@
 "use client";
 
+import { register } from "@/actions/auth/sign-up";
+import { customToast } from "@/components/custom-toast";
 import { Button } from "@/components/ui/button";
 import { Input, PasswordInput } from "@/components/ui/input";
+import { errorCode } from "@/constants";
+import { successCode } from "@/constants/success-handler";
+import { RegisterSchema, RegisterSchemaForm } from "@/schema";
+import type { ErrorCode } from "@/types/error";
+import { errorMessage, successMessage } from "@/utils/errorMessage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "../../../../../components/ui/form";
 
-export function RegisterForm({ email }: { email: string }) {
-	const [isPending, startTransition] = useTransition();
+export function RegisterForm({
+  email,
+  token,
+  hasError,
+}: {
+  email: string;
+  token: string;
+  hasError: boolean;
+}) {
+  const [isPending, startTransition] = useTransition();
 
-	// TODO: Tratar erros de validação
-	const signUpSchema = z.object({
-		name: z.string().min(5, "Nome completo!"),
-		email: z.string().email(),
-		password: z
-			.string()
-			.min(6, "Deve ter pelo menos 6 caracteres")
-			.regex(
-				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{6,}$/,
-				"Deve ter pelo menos 6 caracteres:\n- Uma letra maiúscula\n- Uma letra minúscula\n- Um número\n- Um caractere especial (@$!%*?&)",
-			),
-	});
+  const form = useForm<z.infer<typeof RegisterSchemaForm>>({
+    resolver: zodResolver(RegisterSchemaForm),
+    defaultValues: {
+      name: "",
+      password: "",
+      password2: "",
+    },
+  });
 
-	const form = useForm<z.infer<typeof signUpSchema>>({
-		resolver: zodResolver(signUpSchema),
-		defaultValues: {
-			name: "",
-			email: email,
-			password: "",
-		},
-	});
+  const onSubmit = (data: z.infer<typeof RegisterSchemaForm>) => {
+    const dataWithEmail = { ...data, email, token };
+    const validatedFields = RegisterSchema.safeParse(dataWithEmail);
 
-	const onSubmit = (data: z.infer<typeof signUpSchema>) => {
-		startTransition(async () => {
-			console.log(">>> ", data);
-			// const response = await signIn("credentials", {
-			//   email: data.email,
-			//   password: data.password,
-			// });
-		});
-	};
+    if (!validatedFields.success) {
+      customToast({
+        ...errorMessage(errorCode.INVALID_DATA),
+      });
+      return;
+    }
 
-	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-				<FormField
-					control={form.control}
-					name="name"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Nome completo</FormLabel>
-							<FormControl>
-								<Input
-									type="text"
-									placeholder="João da Silva"
-									required
-									{...field}
-								/>
-							</FormControl>
-							<FormDescription className="hidden">
-								Seu nome completo.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="email"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>E-mail</FormLabel>
-							<FormControl>
-								<Input
-									type="email"
-									placeholder="email@provedor.com.br"
-									required
-									{...field}
-									value={email}
-									disabled={!!email}
-								/>
-							</FormControl>
-							<FormDescription className="hidden">Seu e-mail.</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="password"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Password</FormLabel>
-							<FormControl>
-								<div className="relative">
-									<PasswordInput required {...field} disabled={isPending} />
-								</div>
-							</FormControl>
-							<FormDescription className="hidden">Sua senha.</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<Button type="submit" className="w-full" isLoading={isPending}>
-					Login
-				</Button>
-			</form>
-		</Form>
-	);
+    startTransition(async () => {
+      try {
+        const resp = await register(dataWithEmail, new Date());
+        if (resp) {
+          customToast({
+            ...successMessage(successCode.USER_CREATED),
+          });
+        }
+      } catch (error) {
+        if (error instanceof Error && error.message in errorCode) {
+          customToast({
+            ...errorMessage(error.message as ErrorCode),
+          });
+        }
+      }
+    });
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nome completo</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Nome completo"
+                  required
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription className="hidden">
+                Seu nome completo.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <Input
+                type="email"
+                placeholder="email@email.com"
+                value={email}
+                disabled
+              />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Senha</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <PasswordInput required {...field} disabled={isPending} />
+                </div>
+              </FormControl>
+              <FormDescription className="hidden">Sua senha.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password2"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirmar senha</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <PasswordInput required {...field} disabled={isPending} />
+                </div>
+              </FormControl>
+              <FormDescription className="hidden">
+                Confirme sua senha.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button
+          type="submit"
+          className="w-full"
+          isLoading={isPending}
+          disabled={hasError}
+        >
+          Cadastrar
+        </Button>
+      </form>
+    </Form>
+  );
 }

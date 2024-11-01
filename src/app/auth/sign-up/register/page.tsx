@@ -1,32 +1,72 @@
+"use client";
+
+import { getVerificationToken } from "@/actions/auth/sign-up";
+import { customToast } from "@/components/custom-toast";
 import { FormCard } from "@/components/form-card";
+import { errorCode } from "@/constants";
+import { errorMessage } from "@/utils/errorMessage";
+import type { VerificationToken } from "@prisma/client";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { RegisterForm } from "./_components/register-form";
 
-export default function RegisterPage({
-	searchParams,
-}: {
-	searchParams: { token: string };
-}) {
-	return (
-		//TODO:
-		// Verificar se o token é valido (token !== null || token.expiresAt > new Date())
-		//  - Se nao for
-		//    - Disparar um toast de erro
-		//    - Redirecionar para "/home" ou "/auth/sign-up" (com mensagem de erro)
-		//  - Se for, redirecionar para a pagina de login ou autenticar o usuario e redirecionar para pagina inicial (autenticado)
+export default function RegisterPage() {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("code");
 
-		<div className="flex flex-col h-screen w-full items-center justify-center px-4">
-			<FormCard
-				title="Criar conta"
-				description="Insira seus dados para finalizar o cadastro"
-				redirectLink={{
-					text: "Já tem uma conta?",
-					btnText: "Faça login",
-					href: "/auth/sign-in",
-				}}
-			>
-				{/* TODO: Preencher o email com o email do token */}
-				<RegisterForm email="email@email.com" />
-			</FormCard>
-		</div>
-	);
+  const [verifiedToken, setVerifiedToken] = useState<VerificationToken>({
+    expires: new Date(),
+    identifier: "",
+    token: "",
+  });
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      customToast({
+        ...errorMessage(errorCode.VERIFICATION_TOKEN_NOT_FOUND),
+      });
+      return;
+    }
+
+    getVerificationToken(token)
+      .then((res) => {
+        setVerifiedToken(res);
+      })
+      .catch((error) => {
+        setHasError(true);
+        customToast({
+          ...errorMessage(error.message),
+          action: {
+            text: "Ir para cadastro",
+            redirectPath: "/auth/sign-up",
+          },
+        });
+      });
+  }, [token]);
+
+  const { identifier } = verifiedToken;
+
+  return (
+    //TODO:
+    //  - Se for, redirecionar para a pagina de login ou autenticar o usuario e redirecionar para pagina inicial (autenticado)
+
+    <div className="flex flex-col h-screen w-full items-center justify-center px-4">
+      <FormCard
+        title="Criar conta"
+        description="Insira seus dados para finalizar o cadastro"
+        redirectLink={{
+          text: "Já tem uma conta?",
+          btnText: "Faça login",
+          href: "/auth/sign-in",
+        }}
+      >
+        <RegisterForm
+          email={identifier}
+          token={verifiedToken.token}
+          hasError={hasError}
+        />
+      </FormCard>
+    </div>
+  );
 }

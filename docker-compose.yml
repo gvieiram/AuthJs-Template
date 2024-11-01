@@ -1,0 +1,10 @@
+services:
+  postgres:
+    container_name: authjs_database
+    image: postgres
+    environment:
+      - POSTGRES_USER=authjs
+      - POSTGRES_PASSWORD=authjs
+      - POSTGRES_DB=authjs_db
+    ports:
+      - 5432:5432
