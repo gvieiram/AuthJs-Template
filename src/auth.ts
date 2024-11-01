@@ -4,6 +4,7 @@ import bcryptjs from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { getUserByEmail } from "./db/query/user";
+import { privateRoutesArray, publicRoutes, redirectRules } from "./routes";
 import { SignInSchema } from "./schema";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -12,7 +13,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   pages: {
-    signIn: "/auth/sign-in",
+    signIn: publicRoutes.LOGIN,
   },
   providers: [
     Credentials({
@@ -46,23 +47,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     authorized: async ({ auth, request: { nextUrl } }) => {
       const isLoggedIn = !!auth?.user;
 
-      const protectedPaths = ["/dashboard"];
-      const isProtected = protectedPaths.some((path) =>
+      const isProtected = privateRoutesArray.some((path) =>
         nextUrl.pathname.startsWith(path)
       );
 
-      // Prevent logged users from accessing sign-up page
-      const redirectPathsForLoggedUsers = ["/sign-up"];
+      // Prevent logged in users from accessing sign-up page
+      // Users logged in don't need to access sign-up page (usability)
+      const redirectPathsForLoggedUsers = redirectRules.loggedIn.paths;
       const isRedirectPathForLoggedUsers = redirectPathsForLoggedUsers.some(
         (path) => nextUrl.pathname.startsWith(path)
       );
       if (isRedirectPathForLoggedUsers && isLoggedIn) {
-        return Response.redirect(new URL("/dashboard", nextUrl.origin));
+        return Response.redirect(
+          new URL(redirectRules.loggedIn.to, nextUrl.origin)
+        );
       }
 
       // Redirect unauthenticated users to sign-in page
       if (isProtected && !isLoggedIn) {
-        const redirectUrl = new URL("/auth/sign-in", nextUrl.origin);
+        const redirectUrl = new URL(
+          redirectRules.unauthenticated.to,
+          nextUrl.origin
+        );
         redirectUrl.searchParams.append("callbackUrl", nextUrl.href);
         return Response.redirect(redirectUrl);
       }

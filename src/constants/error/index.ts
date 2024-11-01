@@ -5,6 +5,8 @@ export const errorCode = {
   TOKEN_EXPIRED: "TOKEN_EXPIRED",
   SERVER_ERROR: "SERVER_ERROR",
   VERIFICATION_TOKEN_NOT_FOUND: "VERIFICATION_TOKEN_NOT_FOUND",
+  VERIFICATION_TOKEN_FAILED_TO_SEND_EMAIL:
+    "VERIFICATION_TOKEN_FAILED_TO_SEND_EMAIL",
   VERIFICATION_TOKEN_EXPIRED: "VERIFICATION_TOKEN_EXPIRED",
   INVALID_DATA: "INVALID_DATA",
   USER_ALREADY_EXISTS: "USER_ALREADY_EXISTS",
@@ -52,5 +54,9 @@ export const errorDescription: ErrorDescription = {
   USER_CREATION_FAILED: {
     title: defaultErrorTitle,
     description: defaultErrorDescription,
+  },
+  VERIFICATION_TOKEN_FAILED_TO_SEND_EMAIL: {
+    title: defaultErrorTitle,
+    description: "Falha ao enviar e-mail de verificação",
   },
 };

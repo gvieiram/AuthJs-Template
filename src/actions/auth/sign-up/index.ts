@@ -1,5 +1,6 @@
 "use server";
 
+import { sendVerificationTokenEmail } from "@/actions/emails";
 import { errorCode } from "@/constants";
 import {
   createVerificationToken,
@@ -7,7 +8,6 @@ import {
   getVerificationTokenByToken,
 } from "@/db/query/token";
 import { createUser, getUserByEmail } from "@/db/query/user";
-import { sendVerificationEmail } from "@/emails";
 import { RegisterSchema, SignUpSchema } from "@/schema";
 import bcryptjs from "bcryptjs";
 import type { z } from "zod";
@@ -31,10 +31,10 @@ export const signUp = async (data: z.infer<typeof SignUpSchema>) => {
       validatedFields.data.email
     );
 
-    const emailData = await sendVerificationEmail(
+    const emailData = await sendVerificationTokenEmail(
       verificationToken.identifier,
       verificationToken.token,
-      verificationToken.expires.getTime()
+      verificationToken.expires
     );
 
     if (!emailData.success) {
@@ -83,7 +83,6 @@ export const register = async (
     const { name, email, password, password2, token } = data;
 
     const existingUser = await getUserByEmail(email);
-    console.log("existingUser >>> ", existingUser);
 
     if (existingUser) {
       throw new Error(errorCode.USER_ALREADY_EXISTS);
