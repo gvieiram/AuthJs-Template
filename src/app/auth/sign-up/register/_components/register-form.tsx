@@ -1,15 +1,15 @@
 "use client";
 
-import { register } from "@/actions/auth/sign-up";
+import { register } from "@/actions";
 import { customToast } from "@/components/custom-toast";
 import { Button } from "@/components/ui/button";
 import { Input, PasswordInput } from "@/components/ui/input";
 import { errorCode } from "@/constants";
 import { successCode } from "@/constants/success-handler";
+import { publicRoutes } from "@/routes";
 import { RegisterSchema, RegisterSchemaForm } from "@/schema";
-import type { ErrorCode } from "@/types/error";
-import { errorMessage, successMessage } from "@/utils/errorMessage";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
@@ -33,6 +33,7 @@ export function RegisterForm({
   hasError: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof RegisterSchemaForm>>({
     resolver: zodResolver(RegisterSchemaForm),
@@ -49,7 +50,7 @@ export function RegisterForm({
 
     if (!validatedFields.success) {
       customToast({
-        ...errorMessage(errorCode.INVALID_DATA),
+        toastCode: errorCode.INVALID_DATA,
       });
       return;
     }
@@ -57,15 +58,18 @@ export function RegisterForm({
     startTransition(async () => {
       try {
         const resp = await register(dataWithEmail, new Date());
+
         if (resp) {
+          router.push(publicRoutes.LOGIN);
+
           customToast({
-            ...successMessage(successCode.USER_CREATED),
+            toastCode: successCode.USER_CREATED,
           });
         }
       } catch (error) {
         if (error instanceof Error && error.message in errorCode) {
           customToast({
-            ...errorMessage(error.message as ErrorCode),
+            toastCode: error.message,
           });
         }
       }
@@ -98,7 +102,7 @@ export function RegisterForm({
         />
         <FormField
           name="email"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Email</FormLabel>
               <Input

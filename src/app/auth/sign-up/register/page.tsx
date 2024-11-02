@@ -4,7 +4,7 @@ import { getVerificationToken } from "@/actions/auth/sign-up";
 import { customToast } from "@/components/custom-toast";
 import { FormCard } from "@/components/form-card";
 import { errorCode } from "@/constants";
-import { errorMessage } from "@/utils/errorMessage";
+import { publicRoutes } from "@/routes";
 import type { VerificationToken } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -24,7 +24,7 @@ export default function RegisterPage() {
   useEffect(() => {
     if (!token) {
       customToast({
-        ...errorMessage(errorCode.VERIFICATION_TOKEN_NOT_FOUND),
+        toastCode: errorCode.VERIFICATION_TOKEN_NOT_FOUND,
       });
       return;
     }
@@ -36,10 +36,10 @@ export default function RegisterPage() {
       .catch((error) => {
         setHasError(true);
         customToast({
-          ...errorMessage(error.message),
+          toastCode: error.message,
           action: {
             text: "Ir para cadastro",
-            redirectPath: "/auth/sign-up",
+            redirectPath: publicRoutes.REGISTER,
           },
         });
       });
@@ -48,9 +48,6 @@ export default function RegisterPage() {
   const { identifier } = verifiedToken;
 
   return (
-    //TODO:
-    //  - Se for, redirecionar para a pagina de login ou autenticar o usuario e redirecionar para pagina inicial (autenticado)
-
     <div className="flex flex-col h-screen w-full items-center justify-center px-4">
       <FormCard
         title="Criar conta"
@@ -58,7 +55,7 @@ export default function RegisterPage() {
         redirectLink={{
           text: "Já tem uma conta?",
           btnText: "Faça login",
-          href: "/auth/sign-in",
+          href: publicRoutes.LOGIN,
         }}
       >
         <RegisterForm

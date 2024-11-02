@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@/hooks/use-toast";
+import { toastMessage } from "@/utils/toastMessage";
 import { redirect } from "next/navigation";
 import { ToastAction } from "./ui/toast";
 
@@ -9,25 +10,34 @@ export const customToast = ({
   description,
   variant,
   action,
+  toastCode,
 }: {
-  title: string;
-  description: string;
-  variant?: "default" | "destructive";
+  title?: string;
+  description?: string;
+  variant?: "destructive" | "success" | "default";
   action?: {
     text: string;
     redirectPath?: string;
     type?: "button" | "submit" | "reset";
   };
+  toastCode?: string;
 }) => {
   const redirectToPath = (path: string) => {
     redirect(path);
   };
 
+  const toastMessages = toastCode
+    ? toastMessage(toastCode)
+    : { title, description, variant: "default" };
+
+  const toastVariant = toastMessages.variant ? toastMessages.variant : variant;
+
   const toastInstance = toast({
-    title,
-    description,
-    variant: variant || "destructive",
+    title: toastMessages.title,
+    description: toastMessages.description,
+    variant: toastVariant === "destructive" ? "destructive" : "default",
     duration: 5000,
+    className: toastVariant === "success" ? "bg-success-toast " : undefined,
     action: action && (
       <ToastAction
         altText={action.text}

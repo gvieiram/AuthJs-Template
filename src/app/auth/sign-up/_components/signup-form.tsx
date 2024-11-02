@@ -1,6 +1,7 @@
 "use client";
 
 import { signUp } from "@/actions/auth/sign-up";
+import { customToast } from "@/components/custom-toast";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,7 +13,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { SignUpSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,32 +35,19 @@ export function SignUpForm() {
   const onSubmit = (data: z.infer<typeof SignUpSchema>) => {
     startTransition(async () => {
       try {
-        const { type, message } = await signUp(data);
+        const { success, code: toastCode } = await signUp(data);
 
-        if (type === "error") {
-          toast({
-            title: "Ocorreu um erro! Toast 1",
-            description: message,
-            variant: "destructive",
+        if (success) {
+          customToast({
+            toastCode,
           });
         }
-
-        toast({
-          title: "Você está quase lá!",
-          description: message,
-        });
       } catch (error) {
-        console.log(error);
-        toast({
-          title: "Ocorreu um erro!",
-          description: "Ocorreu um erro ao enviar o e-mail.",
-          variant: "destructive",
-          action: (
-            <ToastAction altText="Tente novamente" onClick={() => {}}>
-              Tente novamente
-            </ToastAction>
-          ),
-        });
+        if (error instanceof Error) {
+          customToast({
+            toastCode: error.message,
+          });
+        }
       } finally {
         form.reset();
       }

@@ -1,7 +1,7 @@
 "use server";
 
 import { sendVerificationTokenEmail } from "@/actions/emails";
-import { errorCode } from "@/constants";
+import { errorCode, successCode } from "@/constants";
 import {
   createVerificationToken,
   deleteVerificationToken,
@@ -18,12 +18,7 @@ export const signUp = async (data: z.infer<typeof SignUpSchema>) => {
 
   // Return early if the form data is invalid
   if (!validatedFields.success) {
-    return {
-      type: "error",
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: "Dados inválidos!",
-      resetKey: "",
-    };
+    throw new Error(errorCode.INVALID_DATA);
   }
 
   try {
@@ -38,33 +33,22 @@ export const signUp = async (data: z.infer<typeof SignUpSchema>) => {
     );
 
     if (!emailData.success) {
-      return {
-        type: "error",
-        errors: {
-          email: undefined,
-        },
-        message: "Ocorreu um erro ao enviar o e-mail.",
-        resetKey: "",
-      };
+      throw new Error(errorCode.VERIFICATION_TOKEN_FAILED_TO_SEND_EMAIL);
     }
 
     return {
-      type: "success",
+      success: true,
       errors: null,
-      message: "Dá uma olhada no seu e-mail para finalizar o cadastro!",
-      resetKey: Date.now().toString(),
+      code: successCode.VERIFICATION_TOKEN_SENT_TO_EMAIL,
     };
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   } catch (error: any) {
     console.error("Failed to signUp", error);
-    return {
-      type: "error",
-      errors: {
-        email: undefined,
-      },
-      message: error.message || "Ocorreu um erro ao enviar o e-mail.",
-      resetKey: "",
-    };
+    if (error instanceof Error && error.message in errorCode) {
+      throw error;
+    }
+
+    throw new Error(errorCode.USER_CREATION_FAILED);
   }
 };
 
