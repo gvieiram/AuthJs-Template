@@ -1,5 +1,6 @@
-import { getVerificationTokenByToken } from "@/db/query/token";
+"use server"
 
+import { getVerificationTokenByToken } from "@/db/query/token";
 import { errorCode } from "@/constants";
 import {
   createVerificationToken,
