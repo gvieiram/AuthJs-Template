@@ -5,7 +5,6 @@ import { customToast } from "@/components/custom-toast";
 import { Button } from "@/components/ui/button";
 import { Input, PasswordInput } from "@/components/ui/input";
 import { errorCode } from "@/constants";
-import { successCode } from "@/constants/success-handler";
 import { publicRoutes } from "@/routes";
 import { RegisterSchema, RegisterSchemaForm } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -59,11 +58,11 @@ export function RegisterForm({
       try {
         const resp = await register(dataWithEmail, new Date());
 
-        if (resp) {
+        if (resp.success) {
           router.push(publicRoutes.LOGIN);
 
           customToast({
-            toastCode: successCode.USER_CREATED,
+            toastCode: resp.code,
           });
         }
       } catch (error) {

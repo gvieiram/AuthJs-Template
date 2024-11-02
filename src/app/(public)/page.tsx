@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { publicRoutes } from "@/routes";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -19,10 +20,10 @@ export default function Home() {
           </p>
         )}
         <div className="flex gap-2 mt-4">
-          <Link href="/auth/sign-in">
+          <Link href={publicRoutes.LOGIN}>
             <Button variant="outline">Sign in</Button>
           </Link>
-          <Link href="/auth/sign-up">
+          <Link href={publicRoutes.REGISTER}>
             <Button>Sign up</Button>
           </Link>
         </div>

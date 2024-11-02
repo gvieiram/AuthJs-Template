@@ -64,3 +64,38 @@ export async function createUser({
 
   return user;
 }
+
+export const createUserAccountWithCredentials = async (email: string) => {
+  const account = await prisma.account.create({
+    data: {
+      type: "credentials",
+      provider: "credentials",
+      providerAccountId: email,
+      user: {
+        connect: {
+          email: email,
+        },
+      },
+    },
+  });
+
+  return account;
+};
+
+export const checkExistingUserAccountWithEmail = async (email: string) => {
+  const user = await prisma.user.findFirst({
+    where: {
+      email: email.trim(),
+      accounts: {
+        some: {
+          type: "email",
+        },
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return !!user;
+};

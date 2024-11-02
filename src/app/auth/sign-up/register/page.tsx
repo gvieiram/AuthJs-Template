@@ -1,6 +1,6 @@
 "use client";
 
-import { getVerificationToken } from "@/actions/auth/sign-up";
+import { getVerificationToken } from "@/actions/auth/verification-token";
 import { customToast } from "@/components/custom-toast";
 import { FormCard } from "@/components/form-card";
 import { errorCode } from "@/constants";
@@ -45,8 +45,6 @@ export default function RegisterPage() {
       });
   }, [token]);
 
-  const { identifier } = verifiedToken;
-
   return (
     <div className="flex flex-col h-screen w-full items-center justify-center px-4">
       <FormCard
@@ -59,7 +57,7 @@ export default function RegisterPage() {
         }}
       >
         <RegisterForm
-          email={identifier}
+          email={verifiedToken.identifier}
           token={verifiedToken.token}
           hasError={hasError}
         />

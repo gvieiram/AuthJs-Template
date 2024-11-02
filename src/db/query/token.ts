@@ -1,7 +1,7 @@
 import { prisma } from "@/db";
 import { v4 as uuid } from "uuid";
 
-export const createVerificationToken = async (email: string) => {
+const createVerificationTokenOld = async (email: string) => {
   const token = uuid();
   const expires = new Date(new Date().getTime() + 10 * 60 * 1000); //10 minutos
 
@@ -68,6 +68,26 @@ export const createVerificationToken = async (email: string) => {
   const verificationToken = await prisma.verificationToken.create({
     data: {
       identifier: email,
+      token,
+      expires,
+    },
+  });
+
+  return verificationToken;
+};
+
+export const createVerificationToken = async ({
+  identifier,
+  token,
+  expires,
+}: {
+  identifier: string;
+  token: string;
+  expires: Date;
+}) => {
+  const verificationToken = await prisma.verificationToken.create({
+    data: {
+      identifier,
       token,
       expires,
     },

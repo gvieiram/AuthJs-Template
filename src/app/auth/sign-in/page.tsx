@@ -1,4 +1,5 @@
 import { FormCard } from "@/components/form-card";
+import { publicRoutes } from "@/routes";
 import { LoginForm } from "./_components/login-form";
 
 export default async function SignIn({
@@ -16,7 +17,7 @@ export default async function SignIn({
         redirectLink={{
           text: "Não tem uma conta?",
           btnText: "Cadastre-se",
-          href: "/auth/sign-up",
+          href: publicRoutes.REGISTER,
         }}
         socialLogin={true}
       >

@@ -20,7 +20,7 @@ export async function sendVerificationTokenEmail(
     const redirectUrl = `${BASE_URL}${publicRoutes.REGISTER_DETAILS}?code=${token}`;
 
     await resend.emails.send({
-      from: resendEmailFrom.NO_REPLY,
+      from: resendEmailFrom.ONBOARDING,
       to: email,
       subject: "Código de verificação para criar uma nova conta",
       react: VerificationTokenEmail({

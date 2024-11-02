@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { publicRoutes } from "@/routes";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -12,7 +13,7 @@ export default async function Dashboard() {
 
       <p>{JSON.stringify(session?.user)}</p>
 
-      <Link href="/">
+      <Link href={publicRoutes.HOME}>
         <Button variant="link">Go to public page</Button>
       </Link>
     </main>

@@ -1,4 +1,4 @@
-import type { successCode } from "@/constants/success-handler";
+import type { successCode } from "@/constants";
 
 export type SuccessCode = keyof typeof successCode;
 export type SuccessDescription = Record<

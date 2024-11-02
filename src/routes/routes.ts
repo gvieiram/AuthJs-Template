@@ -3,6 +3,7 @@ export const publicRoutes = {
   LOGIN: "/auth/sign-in",
   REGISTER: "/auth/sign-up",
   REGISTER_DETAILS: "/auth/sign-up/register",
+  FORGOT_PASSWORD: "/auth/forgot-password",
 };
 
 export const privateRoutes = {

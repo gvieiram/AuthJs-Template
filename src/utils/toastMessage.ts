@@ -1,5 +1,9 @@
-import { errorCode, errorDescription } from "@/constants";
-import { successCode, successDescription } from "@/constants/success-handler";
+import {
+  errorCode,
+  errorDescription,
+  successCode,
+  successDescription,
+} from "@/constants";
 import type { ErrorCode } from "@/types/error";
 import type { SuccessCode } from "@/types/success";
 

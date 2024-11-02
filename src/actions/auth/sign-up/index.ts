@@ -1,16 +1,17 @@
 "use server";
 
 import { sendVerificationTokenEmail } from "@/actions/emails";
-import { errorCode, successCode } from "@/constants";
+import { EMAIL_MINUTES, errorCode, successCode } from "@/constants";
+import { deleteVerificationToken } from "@/db/query/token";
 import {
-  createVerificationToken,
-  deleteVerificationToken,
-  getVerificationTokenByToken,
-} from "@/db/query/token";
-import { createUser, getUserByEmail } from "@/db/query/user";
+  createUser,
+  createUserAccountWithCredentials,
+  getUserByEmail,
+} from "@/db/query/user";
 import { RegisterSchema, SignUpSchema } from "@/schema";
 import bcryptjs from "bcryptjs";
 import type { z } from "zod";
+import { handleCreateVerificationToken } from "../verification-token";
 
 // =============================== signUp ===============================
 export const signUp = async (data: z.infer<typeof SignUpSchema>) => {
@@ -22,9 +23,11 @@ export const signUp = async (data: z.infer<typeof SignUpSchema>) => {
   }
 
   try {
-    const verificationToken = await createVerificationToken(
-      validatedFields.data.email
-    );
+    const { email } = validatedFields.data;
+    const verificationToken = await handleCreateVerificationToken({
+      identifier: email,
+      expiresMinutes: EMAIL_MINUTES,
+    });
 
     const emailData = await sendVerificationTokenEmail(
       verificationToken.identifier,
@@ -91,9 +94,23 @@ export const register = async (
       throw new Error(errorCode.USER_CREATION_FAILED);
     }
 
+    const userAccount = await createUserAccountWithCredentials(email);
+
+    if (!userAccount) {
+      throw new Error(errorCode.USER_ACCOUNT_CREATION_FAILED);
+    }
+
     await deleteVerificationToken(email, token);
 
-    return user;
+    return {
+      success: true,
+      errors: null,
+      code: successCode.USER_CREATED,
+      data: {
+        user,
+        userAccount,
+      },
+    };
   } catch (error) {
     if (error instanceof Error && error.message in errorCode) {
       throw error;
@@ -101,20 +118,4 @@ export const register = async (
 
     throw new Error(errorCode.USER_CREATION_FAILED);
   }
-};
-
-export const getVerificationToken = async (token: string) => {
-  const existingToken = await getVerificationTokenByToken(token);
-
-  if (!existingToken) {
-    throw new Error(errorCode.VERIFICATION_TOKEN_NOT_FOUND);
-  }
-
-  const isTokenExpired = new Date(existingToken.expires) < new Date();
-
-  if (isTokenExpired) {
-    throw new Error(errorCode.TOKEN_EXPIRED);
-  }
-
-  return existingToken;
 };

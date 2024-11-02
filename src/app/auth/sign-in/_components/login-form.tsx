@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input, PasswordInput } from "@/components/ui/input";
+import { publicRoutes } from "@/routes";
 import { SignInSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -82,7 +83,7 @@ export function LoginForm() {
           />
           <div className="flex flex-row gap-2 items-center justify-start text-xs">
             <p className="text-center ">Esqueceu sua senha?</p>
-            <Link href="/auth/forgot-password">
+            <Link href={publicRoutes.FORGOT_PASSWORD}>
               <Button variant="link" className="p-0 text-xs">
                 Recuperar
               </Button>

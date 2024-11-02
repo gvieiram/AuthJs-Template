@@ -12,6 +12,8 @@ export const errorCode = {
   USER_ALREADY_EXISTS: "USER_ALREADY_EXISTS",
   PASSWORDS_DO_NOT_MATCH: "PASSWORDS_DO_NOT_MATCH",
   USER_CREATION_FAILED: "USER_CREATION_FAILED",
+  EMAIL_ALREADY_TAKEN: "EMAIL_ALREADY_TAKEN",
+  USER_ACCOUNT_CREATION_FAILED: "USER_ACCOUNT_CREATION_FAILED",
 } as const;
 
 const defaultErrorTitle = "Ops! Algo de errado aconteceu!";
@@ -47,6 +49,10 @@ export const errorDescription: ErrorDescription = {
     title: defaultErrorTitle,
     description: "O e-mail já está em uso, tente cadastrar com outro.",
   },
+  EMAIL_ALREADY_TAKEN: {
+    title: defaultErrorTitle,
+    description: "O e-mail já está em uso, tente cadastrar outro.",
+  },
   PASSWORDS_DO_NOT_MATCH: {
     title: defaultErrorTitle,
     description: "As senhas não correspondem, tente novamente.",
@@ -58,5 +64,9 @@ export const errorDescription: ErrorDescription = {
   VERIFICATION_TOKEN_FAILED_TO_SEND_EMAIL: {
     title: defaultErrorTitle,
     description: "Falha ao enviar e-mail de verificação",
+  },
+  USER_ACCOUNT_CREATION_FAILED: {
+    title: defaultErrorTitle,
+    description: "Falha ao criar conta de usuário",
   },
 };
