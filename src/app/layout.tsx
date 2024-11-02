@@ -5,24 +5,24 @@ import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
-  title: "AuthJS Template",
-  description: "AuthJS Template",
+	title: "AuthJS Template",
+	description: "AuthJS Template",
 };
 
 export default async function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  const session = await auth();
-  return (
-    <html lang="pt-BR">
-      <body className="antialiased dark" suppressHydrationWarning>
-        <SessionProvider session={session}>
-          <Toaster />
-          {children}
-        </SessionProvider>
-      </body>
-    </html>
-  );
+	const session = await auth();
+	return (
+		<html lang="pt-BR">
+			<body className="antialiased dark" suppressHydrationWarning>
+				<SessionProvider session={session}>
+					<Toaster />
+					{children}
+				</SessionProvider>
+			</body>
+		</html>
+	);
 }

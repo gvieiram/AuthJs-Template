@@ -1,9 +1,9 @@
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -12,92 +12,92 @@ import { FcGoogle } from "react-icons/fc";
 import { Button } from "./ui/button";
 
 interface FormCardProps {
-  title: string;
-  description: string;
-  children: ReactNode;
-  socialLogin?: boolean;
-  redirectLink?: {
-    text: string;
-    btnText: string;
-    href: string;
-  };
+	title: string;
+	description: string;
+	children: ReactNode;
+	socialLogin?: boolean;
+	redirectLink?: {
+		text: string;
+		btnText: string;
+		href: string;
+	};
 }
 
 export function FormCard({
-  title,
-  description,
-  children,
-  socialLogin,
-  redirectLink,
+	title,
+	description,
+	children,
+	socialLogin,
+	redirectLink,
 }: FormCardProps) {
-  return (
-    <Card className="mx-auto max-w-sm sm:min-w-96">
-      <CardHeader>
-        <CardTitle className="text-2xl">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col gap-4">
-          <div className="grid gap-4">{children}</div>
+	return (
+		<Card className="mx-auto max-w-sm sm:min-w-96">
+			<CardHeader>
+				<CardTitle className="text-2xl">{title}</CardTitle>
+				<CardDescription>{description}</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<div className="flex flex-col gap-4">
+					<div className="grid gap-4">{children}</div>
 
-          {socialLogin && (
-            <>
-              <p className="text-center text-muted-foreground text-xs">
-                Ou faça login com:
-              </p>
+					{socialLogin && (
+						<>
+							<p className="text-center text-muted-foreground text-xs">
+								Ou faça login com:
+							</p>
 
-              <div className="flex flex-row gap-4 flex-wrap items-center justify-center">
-                <SocialButton>
-                  <FcGoogle style={{ width: "2rem", height: "2rem" }} />
-                </SocialButton>
-                <SocialButton>
-                  <FaApple
-                    style={{ width: "2rem", height: "2rem" }}
-                    className="text-[#555555] dark:text-white"
-                  />
-                </SocialButton>
-                <SocialButton>
-                  <FaFacebookF
-                    style={{ width: "2rem", height: "2rem" }}
-                    color="#4267B2"
-                  />
-                </SocialButton>
-              </div>
-            </>
-          )}
-        </div>
+							<div className="flex flex-row gap-4 flex-wrap items-center justify-center">
+								<SocialButton>
+									<FcGoogle style={{ width: "2rem", height: "2rem" }} />
+								</SocialButton>
+								<SocialButton>
+									<FaApple
+										style={{ width: "2rem", height: "2rem" }}
+										className="text-[#555555] dark:text-white"
+									/>
+								</SocialButton>
+								<SocialButton>
+									<FaFacebookF
+										style={{ width: "2rem", height: "2rem" }}
+										color="#4267B2"
+									/>
+								</SocialButton>
+							</div>
+						</>
+					)}
+				</div>
 
-        {redirectLink && (
-          <div className="flex flex-row gap-2 items-center justify-center text-xs mt-4">
-            <p className="text-center">{redirectLink.text}</p>
-            <Link href={redirectLink.href}>
-              <Button variant="link" className="p-0 text-xs">
-                {redirectLink.btnText}
-              </Button>
-            </Link>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
+				{redirectLink && (
+					<div className="flex flex-row gap-2 items-center justify-center text-xs mt-4">
+						<p className="text-center">{redirectLink.text}</p>
+						<Link href={redirectLink.href}>
+							<Button variant="link" className="p-0 text-xs">
+								{redirectLink.btnText}
+							</Button>
+						</Link>
+					</div>
+				)}
+			</CardContent>
+		</Card>
+	);
 }
 
 const SocialButton = ({
-  children,
-  size = "md",
+	children,
+	size = "md",
 }: {
-  children: ReactNode;
-  size?: "sm" | "md" | "lg";
+	children: ReactNode;
+	size?: "sm" | "md" | "lg";
 }) => {
-  const sizeClass = size === "sm" ? "1rem" : size === "md" ? "2rem" : "2rem";
-  return (
-    <Button
-      variant="outline"
-      className="size-14 rounded-2xl group flex items-center justify-center"
-    >
-      <span className="transition-transform duration-300 group-hover:-translate-y-1">
-        {children}
-      </span>
-    </Button>
-  );
+	const sizeClass = size === "sm" ? "1rem" : size === "md" ? "2rem" : "2rem";
+	return (
+		<Button
+			variant="outline"
+			className="size-14 rounded-2xl group flex items-center justify-center"
+		>
+			<span className="transition-transform duration-300 group-hover:-translate-y-1">
+				{children}
+			</span>
+		</Button>
+	);
 };
