@@ -82,13 +82,13 @@ export const createUserAccountWithCredentials = async (email: string) => {
 	return account;
 };
 
-export const checkExistingUserAccountWithEmail = async (email: string) => {
+export const checkExistingUserAccountWithCredentials = async (email: string) => {
 	const user = await prisma.user.findFirst({
 		where: {
 			email: email.trim(),
 			accounts: {
 				some: {
-					type: "email",
+					type: "credentials",
 				},
 			},
 		},

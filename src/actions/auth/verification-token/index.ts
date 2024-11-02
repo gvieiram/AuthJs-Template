@@ -7,7 +7,7 @@ import {
 	deleteVerificationToken,
 	findVerificationTokenByIdentifier,
 } from "@/db/query/token";
-import { checkExistingUserAccountWithEmail } from "@/db/query/user";
+import { checkExistingUserAccountWithCredentials } from "@/db/query/user";
 import { v4 as uuid } from "uuid";
 
 export const handleCreateVerificationToken = async ({
@@ -24,7 +24,7 @@ export const handleCreateVerificationToken = async ({
 		// TODO:Check if email is already taken (user with email)
 
 		// check if email is already taken (account type as email)
-		const isEmailTaken = await checkExistingUserAccountWithEmail(identifier);
+		const isEmailTaken = await checkExistingUserAccountWithCredentials(identifier);
 		if (isEmailTaken) {
 			throw new Error(errorCode.EMAIL_ALREADY_TAKEN);
 		}
