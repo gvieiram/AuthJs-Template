@@ -1,21 +1,37 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { publicRoutes } from "@/routes";
-import { useSession } from "next-auth/react";
+import { User } from "next-auth";
 import Link from "next/link";
 
-export default async function Dashboard() {
-	const { data: session } = useSession();
+export default function DashboardPage({ userData, signOut }: { userData: User | undefined, signOut: () => void }) {
 
-	return (
-		<main className="h-screen w-full mx-auto">
-			<h1 className="text-4xl font-bold text-primary">Dashboard</h1>
-			<p className="text-muted-foreground">Path Protected</p>
+  return (
+    <div className="flex flex-col items-center justify-center h-full">
+      <div className="flex flex-col gap-8">
+        <div>
+          <h1 className="text-4xl font-bold text-primary">Dashboard</h1>
+          <p className="text-muted-foreground">Path Protected</p>
+        </div>
 
-			<p>{JSON.stringify(session?.user)}</p>
+        {userData ? (
+          <ul>
+            {userData && Object.entries(userData).map(([key, value]) => (
+              <li key={key}>{key}: {value}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>Carregando dados do usuário...</p>
+        )}
 
-			<Link href={publicRoutes.HOME}>
-				<Button variant="link">Go to public page</Button>
-			</Link>
-		</main>
-	);
+        <div className="flex gap-2">
+          <Link href={publicRoutes.HOME}>
+            <Button variant="link" className="p-0">{"< Go to public page"}</Button>
+          </Link>
+          <Button variant="destructive" onClick={() => signOut()}>Logout</Button>
+        </div>
+      </div>
+    </div>
+  );
 }

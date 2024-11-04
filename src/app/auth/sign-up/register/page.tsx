@@ -1,6 +1,6 @@
 "use client";
 
-import { getVerificationToken } from "@/actions/auth/verification-token";
+import { getVerificationToken } from "@/actions/auth";
 import { customToast } from "@/components/custom-toast";
 import { FormCard } from "@/components/form-card";
 import { errorCode } from "@/constants";

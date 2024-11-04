@@ -1,6 +1,6 @@
 "use client";
 
-import { signUp } from "@/actions/auth/sign-up";
+import { signUp } from "@/actions/auth";
 import { customToast } from "@/components/custom-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +13,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
 import { SignUpSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition } from "react";
@@ -22,8 +21,6 @@ import type { z } from "zod";
 
 export function SignUpForm() {
 	const [isPending, startTransition] = useTransition();
-
-	const { toast } = useToast();
 
 	const form = useForm<z.infer<typeof SignUpSchema>>({
 		resolver: zodResolver(SignUpSchema),

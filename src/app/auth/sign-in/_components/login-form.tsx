@@ -1,5 +1,6 @@
 "use client";
 
+import { signIn } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -32,11 +33,7 @@ export function LoginForm() {
 
 	const onSubmit = (data: z.infer<typeof SignInSchema>) => {
 		startTransition(async () => {
-			console.log(">>> onSubmit ", data);
-			// const response = await signIn("credentials", {
-			//   email: data.email,
-			//   password: data.password,
-			// });
+			await signIn(data);
 		});
 	};
 

@@ -23,4 +23,8 @@ export const redirectRules = {
 		paths: privateRoutesArray,
 		to: publicRoutes.LOGIN,
 	},
+	authLoginRedirect: {
+		paths: [publicRoutes.LOGIN],
+		to: privateRoutes.DASHBOARD,
+	},
 };

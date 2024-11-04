@@ -15,6 +15,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 	pages: {
 		signIn: publicRoutes.LOGIN,
 	},
+	secret: process.env.AUTH_SECRET,
 	providers: [
 		Credentials({
 			id: "credentials",
@@ -44,26 +45,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		}),
 	],
 	callbacks: {
-		authorized: async ({ auth, request: { nextUrl } }) => {
-			const isLoggedIn = !!auth?.user;
+		async signIn({ account, user, credentials }) {
+			if (user.email) {
+				const registeredUser = await getUserByEmail(user?.email);
+				if (!registeredUser?.emailVerified) {
+					console.error("Email não verificado");
+					return false;
+				}
+			}
 
+			return true;
+		},
+		async authorized({ auth, request: { nextUrl } }) {
+			const isLoggedIn = !!auth?.user;
 			const isProtected = privateRoutesArray.some((path) =>
 				nextUrl.pathname.startsWith(path),
 			);
 
-			// Prevent logged in users from accessing sign-up page
-			// Users logged in don't need to access sign-up page (usability)
-			const redirectPathsForLoggedUsers = redirectRules.loggedIn.paths;
-			const isRedirectPathForLoggedUsers = redirectPathsForLoggedUsers.some(
-				(path) => nextUrl.pathname.startsWith(path),
-			);
-			if (isRedirectPathForLoggedUsers && isLoggedIn) {
-				return Response.redirect(
-					new URL(redirectRules.loggedIn.to, nextUrl.origin),
-				);
-			}
-
-			// Redirect unauthenticated users to sign-in page
 			if (isProtected && !isLoggedIn) {
 				const redirectUrl = new URL(
 					redirectRules.unauthenticated.to,
@@ -75,8 +73,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 			return true;
 		},
-		async session({ session, user }) {
-			session.user = user;
+		async jwt({ token, user }) {
+			if (user) {
+				token.user = {
+					...user,
+					password: undefined,
+					role: "DEFAULT",
+					subscription: "FREE",
+				};
+			}
+			return token;
+		},
+		async session({ session, token, }) {
+			session.user = {
+				...session.user,
+				// @ts-ignore
+				...token.user,
+			};
 			return session;
 		},
 	},

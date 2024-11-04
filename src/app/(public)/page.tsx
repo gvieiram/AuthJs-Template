@@ -1,12 +1,8 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
-import { publicRoutes } from "@/routes";
-import { useSession } from "next-auth/react";
+import { privateRoutes, publicRoutes } from "@/routes";
 import Link from "next/link";
 
-export default function Home() {
-	const { data: session } = useSession();
+export default async function Home() {
 	return (
 		<main className="h-screen w-full mx-auto">
 			<div className="flex flex-col items-center justify-center h-full">
@@ -14,12 +10,7 @@ export default function Home() {
 				<p className="text-muted-foreground">
 					Template for creating applications with AuthJS with Prisma and NextJS
 				</p>
-				{session && (
-					<p className="text-muted-foreground">
-						Somente usuários logados podem ver esse texto
-					</p>
-				)}
-				<div className="flex gap-2 mt-4">
+				<div className="flex gap-2 my-4">
 					<Link href={publicRoutes.LOGIN}>
 						<Button variant="outline">Sign in</Button>
 					</Link>
@@ -27,6 +18,10 @@ export default function Home() {
 						<Button>Sign up</Button>
 					</Link>
 				</div>
+
+				<Link href={privateRoutes.DASHBOARD}>
+					<Button variant={"secondary"}>Dashboard (private route)</Button>
+				</Link>
 			</div>
 		</main>
 	);

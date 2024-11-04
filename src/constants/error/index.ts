@@ -14,6 +14,9 @@ export const errorCode = {
 	USER_CREATION_FAILED: "USER_CREATION_FAILED",
 	EMAIL_ALREADY_TAKEN: "EMAIL_ALREADY_TAKEN",
 	USER_ACCOUNT_CREATION_FAILED: "USER_ACCOUNT_CREATION_FAILED",
+	INVALID_CREDENTIALS: "INVALID_CREDENTIALS",
+	USER_NOT_FOUND: "USER_NOT_FOUND",
+	NEXT_REDIRECT: "NEXT_REDIRECT",
 } as const;
 
 const defaultErrorTitle = "Ops! Algo de errado aconteceu!";
@@ -68,5 +71,17 @@ export const errorDescription: ErrorDescription = {
 	USER_ACCOUNT_CREATION_FAILED: {
 		title: defaultErrorTitle,
 		description: "Falha ao criar conta de usuário",
+	},
+	INVALID_CREDENTIALS: {
+		title: defaultErrorTitle,
+		description: "Credenciais inválidas, tente novamente.",
+	},
+	USER_NOT_FOUND: {
+		title: defaultErrorTitle,
+		description: "Usuário não encontrado, tente cadastrar novamente.",
+	},
+	NEXT_REDIRECT: {
+		title: "Erro ao redirecionar",
+		description: "Erro ao redirecionar, tente novamente.",
 	},
 };
