@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcryptjs from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import { getUserByEmail } from "./db/query/user";
 import { privateRoutesArray, publicRoutes, redirectRules } from "./routes";
 import { SignInSchema } from "./schema";
@@ -43,9 +44,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				return user;
 			},
 		}),
+		Google,
 	],
 	callbacks: {
-		async signIn({ account, user, credentials }) {
+		async signIn({ account, user, profile }) {
+			if (account?.provider === "google" && !profile?.email_verified) {
+				return false;
+			}
+
 			if (user.email) {
 				const registeredUser = await getUserByEmail(user?.email);
 				if (!registeredUser?.emailVerified) {
@@ -84,7 +90,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			}
 			return token;
 		},
-		async session({ session, token, }) {
+		async session({ session, token }) {
 			session.user = {
 				...session.user,
 				// @ts-ignore

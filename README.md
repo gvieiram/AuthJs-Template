@@ -82,9 +82,9 @@ yarn
 
 ## Tarefas Pendentes
 
+- [x] Implementar o signIn com Credentials (email e senha).
+- [x] Adicionar o signIn com OAuth.
 - [ ] Implementar a funcionalidade de recuperação de senha.
-- [ ] Implementar o signIn com Credentials (email e senha).
-- [ ] Adicionar Google / Apple / Facebook Auth.
 - [ ] Adicionar autenticação de dois fatores.
 - [ ] Adicionar OTP.
 - [ ] Adicionar suporte a internacionalização (i18n).

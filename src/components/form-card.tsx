@@ -1,3 +1,5 @@
+"use client";
+
 import {
 	Card,
 	CardContent,
@@ -9,6 +11,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { FaApple, FaFacebookF } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
+import { SocialButton } from "./social-btn";
 import { Button } from "./ui/button";
 
 interface FormCardProps {
@@ -47,7 +50,7 @@ export function FormCard({
 							</p>
 
 							<div className="flex flex-row gap-4 flex-wrap items-center justify-center">
-								<SocialButton>
+								<SocialButton oauthProvider="google">
 									<FcGoogle style={{ width: "2rem", height: "2rem" }} />
 								</SocialButton>
 								<SocialButton>
@@ -81,23 +84,3 @@ export function FormCard({
 		</Card>
 	);
 }
-
-const SocialButton = ({
-	children,
-	size = "md",
-}: {
-	children: ReactNode;
-	size?: "sm" | "md" | "lg";
-}) => {
-	const sizeClass = size === "sm" ? "1rem" : size === "md" ? "2rem" : "2rem";
-	return (
-		<Button
-			variant="outline"
-			className="size-14 rounded-2xl group flex items-center justify-center"
-		>
-			<span className="transition-transform duration-300 group-hover:-translate-y-1">
-				{children}
-			</span>
-		</Button>
-	);
-};
