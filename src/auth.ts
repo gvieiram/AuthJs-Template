@@ -48,8 +48,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 	],
 	callbacks: {
 		async signIn({ account, user, profile }) {
-			if (account?.provider === "google" && !profile?.email_verified) {
-				return false;
+			if (account?.provider === "google" && profile?.email_verified) {
+				return true;
 			}
 
 			if (user.email) {
